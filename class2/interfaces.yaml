@@ -1,0 +1,20 @@
+---
+- name: Check connection to Cisco IOS devices
+  hosts: amsterdam-spine1
+  tasks:
+    - name: Connect to devices
+      ios_command:
+        commands: show ip interface brief
+      register: interfaces
+
+    - debug:
+        msg: "{{ interfaces }}"
+
+    - debug:
+        msg: "{{ interfaces['stdout_lines'] }}"
+
+    - debug:
+        msg: "{{ interfaces['stdout_lines'][0] }}"
+
+
+

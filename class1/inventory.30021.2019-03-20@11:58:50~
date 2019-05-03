@@ -1,0 +1,51 @@
+---
+
+### Amsterdam devices
+[amsterdam-edge-routers]
+amsterdam-r1    ansible_host=172.16.80.31
+
+[amsterdam-spines]
+amsterdam-spine1        ansible_host=172.16.80.32
+amsterdam-spine2        ansible_host=172.16.80.33
+
+[amsterdam-leafs]
+amsterdam-leaf1         ansible_host=172.16.80.34
+amsterdam-leaf2         ansible_host=172.16.80.35
+amsterdam-leaf3         ansible_host=172.16.80.36
+
+[amsterdam-backbone]
+amsterdam-backb1        ansible_host=172.16.80.37
+
+[amsterdam:children]
+amsterdam-edge-routers
+amsterdam-spines
+amsterdam-leafs
+amsterdam-backbone
+### END Amsterdam devices
+
+
+
+
+### Vendor specific
+[cisco_ios:children]
+amsterdam-edge-routers
+amsterdam-spines
+amsterdam-leafs
+
+
+[cisco_nxos]
+amsterdam-backb1
+### End vendor specific
+
+
+### Device specific
+[routers]
+amsterdam-r1
+
+[switches:children]
+amsterdam-spines
+amsterdam-leafs
+### End device specific
+
+
+

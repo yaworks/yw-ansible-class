@@ -1,0 +1,9 @@
+- name: Check all uplinks in Amsterdam spine and leafs
+  hosts: [amsterdam-spines, amsterdam-leafs]
+  gather_facts: no
+  tasks:
+    - name: ping all other uplink IPs
+      net_ping:
+        source: "{{ item.my_ip | ipaddr('address') }}"
+        dest: "{{ item.remote_ip | ipaddr('address') }}"
+      loop: '{{ uplinks }}'

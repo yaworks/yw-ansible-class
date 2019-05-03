@@ -1,0 +1,16 @@
+- name: validate_neighbours.yaml
+  hosts: amsterdam
+  gather_facts: no
+  tasks:
+    - name: Check if LLDP is enabled
+      ios_lldp:
+        state: present
+    - name: Validate if all the neighbour interfaces are correct
+      ios_interface:
+        name: '{{ item.my_port }}'
+        enabled: True
+        state: present
+        neighbors:
+        - port: '{{ item.remote_port }}'
+      with_items: '{{ uplinks }}'
+      when: "ansible_network_os == 'ios' and uplinks is defined"

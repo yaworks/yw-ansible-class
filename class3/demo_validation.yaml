@@ -1,0 +1,46 @@
+---
+- name: Configure link between spine1 and spine2
+  hosts: [amsterdam-spine1]
+  tasks:
+    - name: Check if LLDP is running
+      ios_config:
+        lines: lldp run
+
+    # - name: Get interface uplink neighbor
+    #   ios_command:
+    #     commands: 'show lldp neighbors {{ item.my_port }}'
+    #   with_items: '{{ uplinks }}'
+    #   register: output
+
+    # - debug:
+    #     msg: '{{ output }}'
+
+    - name: Get device info
+      napalm_get_facts:
+        provider: "{{ provider_napalm }}"
+        filter: "lldp_neighbors,lldp_neighbors_detail,interfaces,interfaces_ip"   # DO NOT USE SPACES IN LIST
+      register: output
+
+#    - debug:
+#        msg: '{{ output }}'
+## https://www.agileintegratedsolutions.com/how-to-automate-your-network-using-ansible-and-napalm-part-3/
+
+# Check if uplinks are UP
+    - name: Validate that all uplinks are up 
+      assert:
+        that: napalm_interfaces[item.my_port.split('.')[0]].is_up == true
+        msg: |
+          Interface {{ item.my_port }} on {{ inventory_hostname }} is not UP
+      with_items: '{{ uplinks }}'
+
+    - name: debug
+      debug:
+        msg: "napalm_lldp_neighbors['{{ item.my_port }}'][0]"
+      with_items: '{{ uplinks }}'
+
+    - name: Validate that all neighbors are correct
+      assert:
+        that: "'{{ item.remote_device }}' == napalm_lldp_neighbors['{{ item.my_port }}'][0].hostname.split('.')"
+        msg: |
+          Interface {{ item.my_port }} on {{ inventory_hostname }} have wrong neighbor
+      with_items: '{{ uplinks }}'

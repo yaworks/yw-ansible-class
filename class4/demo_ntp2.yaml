@@ -1,0 +1,73 @@
+- name: NTP check
+  hosts: amsterdam-leaf1
+  become: true
+  vars:
+    ntp1: 172.16.9.9
+  tasks:
+    - name: Get NTP lines of config
+      ios_command:
+        commands: 'show run | in ntp '
+      register: output
+
+    - name: current NTP config
+      debug:
+        msg: '{{ output.stdout_lines }}'
+
+#    - pause:
+
+    - name: NTP set
+      ios_config:
+        lines:
+          - "ntp server {{ ntp1 }}"
+          - "ntp server 172.16.9.16"
+
+    - name: Get NTP lines of config
+      ios_command:
+        commands: 'show run | in ntp '
+      register: output
+
+    - name: Check NTP servers from config lines
+      pause:
+
+    - name: current NTP config
+      debug:
+        msg: '{{ output.stdout_lines }}'
+
+    - name: NTP set replace block
+      ios_config:
+        lines:
+          - "!"
+          - "ntp server {{ ntp1 }}"
+          - "ntp server 172.16.9.16"
+          - "!"
+        replace: block
+
+    - name: Get NTP lines of config
+      ios_command:
+        commands: 'show run | in ntp '
+      register: output
+
+    - name: Check NTP servers from config lines with block replace
+      pause:
+
+    - name: current NTP config
+      debug:
+        msg: '{{ output.stdout_lines }}'
+
+
+    - name: render a conf file onto an IOS device
+      ios_config:
+        backup: yes
+        src: ntp_block.conf
+        
+
+    - name: Get NTP lines of config
+      ios_command:
+        commands: 'show run | in ntp '
+      register: output
+
+
+
+    - name: current NTP config
+      debug:
+        msg: '{{ output.stdout_lines }}'

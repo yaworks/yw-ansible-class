@@ -1,0 +1,26 @@
+- name: Filter check
+  hosts: amsterdam-leaf1
+  become: true
+  vars:
+    my_dict:
+      router1:
+        ip_address: 145.47.1.3/24
+        loopback: 10.199.10.3/32
+        snmp_location: rack4
+      router2:
+        ip_address: 145.47.1.16/24 
+        loopback: 10.10.10.4/25
+        snmp_location: rack8 
+  tasks:
+    - name: Print dict
+      debug:
+        msg: "{{ my_dict }}"
+
+    - name: Print dict to_yaml
+      debug:       
+        msg: "{{ my_dict | to_yaml}}"
+
+    - name: Print dict to_nice_yaml
+      debug:       
+        msg: "{{ my_dict | to_nice_yaml }}"
+

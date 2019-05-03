@@ -1,0 +1,5 @@
+---
+intf_uplink_to_amsterdam_backb1_intf: GigabitEthernet0/4
+intf_uplink_to_amsterdam_backb1_ip: 172.20.30.10
+intf_uplink_to_amsterdam_backb1_subnet: 255.255.255.254
+intf_uplink_to_amsterdam_backb1_ip_cidr: 172.20.30.10/31

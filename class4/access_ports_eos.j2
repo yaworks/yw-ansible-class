@@ -1,0 +1,6 @@
+{% for interface in data_intf %}
+interface {{ interface }}
+   description Data VLAN
+   switchport access vlan {{ data_vlan }}
+! 
+{% endfor %}

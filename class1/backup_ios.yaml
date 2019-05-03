@@ -1,0 +1,16 @@
+---
+- name: Check connection to Cisco IOS devices
+  hosts: cisco_ios
+  tasks:
+    - name: Connect to devices
+      ios_command:
+        commands: show run
+      register: output
+
+#    - debug:
+#        msg: '{{ output.stdout_lines }}'
+
+    - name: Save config to file
+      copy:
+        content: '{{ output.stdout[0] }}'
+        dest: './{{ inventory_hostname }}.conf'

@@ -1,0 +1,7 @@
+---
+- name: Check connection to Cisco IOS devices
+  hosts: cisco_ios
+  tasks:
+    - name: Connect to devices
+      ios_command:
+        commands: show version

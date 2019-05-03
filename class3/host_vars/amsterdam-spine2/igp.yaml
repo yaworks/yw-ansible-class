@@ -1,0 +1,15 @@
+---
+ospf:
+  processid: 100
+  ospf_area_default: 200
+  global:
+    - default auto-cost reference-bandwidth 100000
+    - network 0.0.0.0 255.255.255.255 area {{ ospf[ospf_area_default] }}
+    - passive-interface default
+  amsterdam-r1:
+    - redistribute static subnets
+    - redistribute bgp 1 subnets
+
+ospf_intf_list:
+  amsterdam-spine1: [GigabitEthernet0/0, GigabitEthernet0/1, GigabitEthernet0/2, GigabitEthernet0/3, GigabitEthernet0/5]
+

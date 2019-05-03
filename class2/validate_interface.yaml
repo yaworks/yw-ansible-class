@@ -1,0 +1,13 @@
+# validate_interface_ip.yaml
+
+- name: Validate interfaces
+  hosts: amsterdam-spine1
+  tasks:
+    - name: Ping
+      net_ping:
+        dest: 172.20.30.21
+      register: ping_output
+
+    - debug:
+        msg: '{{ ping_output }}'
+

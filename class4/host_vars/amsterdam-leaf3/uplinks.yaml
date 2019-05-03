@@ -1,0 +1,12 @@
+uplinks:
+  - desc: Naar amsterdam-spine1
+    my_port: GigabitEthernet0/0
+    my_ip: 172.20.30.9/31
+    remote_port: GigabitEthernet0/3
+    remote_ip: 172.20.30.8/31
+  - desc: Naar amsterdam-spine2
+    my_port: GigabitEthernet0/1
+    my_ip: 172.20.30.17/31
+    remote_port: GigabitEthernet0/3
+    remote_ip: 172.20.30.16/31
+

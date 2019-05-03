@@ -1,0 +1,43 @@
+- name: Filter check
+  hosts: amsterdam-leaf1
+  become: false
+  connection: local
+  vars:
+    my_dict:
+      router1:
+        ip_address: 145.47.1.3/24
+        loopback: 10.199.10.3/32
+        snmp_location: rack4
+      router2:
+        ip_address: 145.47.1.16/24 
+        loopback: 10.10.10.4/25
+        snmp_location: rack8 
+    my_iplist: ['192.24.2.1', 'host.fqdn', '::1', '192.168.32.0/24', 'fe80::100/10', True, '', '42540766412265424405338506004571095040/64']
+  tasks:
+    - name: Get IP address from cidr for router 1
+      debug:
+        msg: "{{ my_dict.router1.loopback | ipaddr('address') }}"
+
+    - name: Get IP netmaskk from cidr for router 1
+      debug:
+        msg: "{{ my_dict.router1.loopback | ipaddr('netmask') }}"
+
+    - name: Convert the loopback IPv4 to IPv6
+      debug:
+        msg: "{{ my_dict.router1.loopback | ipv4('ipv6') }}"
+
+    - name: Show test list with different ip addresses
+      debug:
+        msg: '{{ my_iplist }}'
+
+    - name: Convert all items to useable IP addresses
+      debug:
+        msg: '{{ my_iplist | ipaddr}}'
+
+    - name: Filter all IPv4 addresses
+      debug:
+        msg: '{{ my_iplist | ipv4 }}'
+
+    - name: Filter all IPv6 addresses     
+      debug:
+        msg: '{{ my_iplist | ipv6 }}'

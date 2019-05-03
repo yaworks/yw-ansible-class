@@ -1,0 +1,12 @@
+- name: NTP check
+  hosts: amsterdam-leafs
+  become: true
+  vars:
+    ntp1: 172.16.9.8
+  tasks:
+    - name: NTP set
+      ios_config:
+        lines:
+          - "ntp server {{ ntp1 }}"
+          - "ntp server 172.16.9.16"
+

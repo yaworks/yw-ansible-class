@@ -1,0 +1,45 @@
+- name: Check connectivity
+  hosts: amsterdam-spine1
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Test connectivity
+      napalm_get_facts:
+        provider: "{{ provider_napalm }}"
+      register: output
+
+    - name: Print facts
+      debug:
+        msg: '{{ output }}'
+
+
+    - name: ARP
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "arp_table,mac_address_table"
+    - name: BGP
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "bgp_config,bgp_neighbors,bgp_neighbors_detail"
+      when: ansible_network_os == 'nxos' or ansible_network_os == 'eos'
+    - name: Config
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "config,environment,facts"
+    - name: Interfaces
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "interfaces,interfaces_counters,interfaces_ip"
+    - name: LLDP
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "lldp_neighbors,lldp_neighbors_detail"
+    - name: NTP
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "ntp_servers,ntp_stats"
+    - name: Users
+      napalm_get_facts: 
+        provider: "{{ provider_napalm }}"
+        filter: "users"
+

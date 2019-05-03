@@ -1,0 +1,11 @@
+- name: Check connectivity
+  hosts: amsterdam-spine1
+  gather_facts: no
+  tasks:
+    - name: Test connectivity         
+      napalm_install_config:
+        provider: "{{ provider_napalm }}"
+        config_file: "./templates/{{ inventory_hostname }}.confg"
+        commit_changes: false
+        replace_config: false
+        diff_file: ./diff.txt 

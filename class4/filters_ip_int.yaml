@@ -1,0 +1,17 @@
+- name: Filter check
+  hosts: local
+  become: fals
+  vars:
+    interfaces: "{{ lookup('file', './show_ip_int_brief.txt') }}"
+  tasks:
+    - name: Show IP int brief
+      debug:
+        msg: "My interfaces:\n\n {{ interfaces }}"
+
+    - name: Show IP int brief - splitlines
+      debug:
+        var: interfaces.splitlines()
+
+    - name: Show IP int brief - splitlines - line 3
+      debug:
+        var: interfaces.splitlines()[2].split()

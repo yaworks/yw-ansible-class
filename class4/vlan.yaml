@@ -1,0 +1,18 @@
+- name: Check connection to Arista EOS devices
+  hosts: london-leafs
+  become: true
+  vars:
+    data_vlan: 33
+  tasks:
+    - name: Build accessport config
+      template:
+        src: access_ports_eos.j2
+        dest: "{{ inventory_hostname }}_accessports.cfg"
+      when: data_intf is defined
+
+    - name: Push accessport config
+      eos_config:
+        save_when: modified
+        provider: '{{ creds_core_eapi }}'
+        src: "{{ inventory_hostname }}_accessports.cfg"
+      when: data_intf is defined

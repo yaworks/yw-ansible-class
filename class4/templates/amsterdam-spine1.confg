@@ -1,0 +1,9 @@
+interface Loopback0
+ ip address 1.2.3.4 255.255.255.255
+!
+interface GigabitEthernet0/0
+ ip address 10.10.30.1 255.255.255.254
+ duplex auto
+ speed auto
+ media-type rj45
+!

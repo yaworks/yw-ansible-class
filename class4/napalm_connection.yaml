@@ -1,0 +1,12 @@
+---
+- hosts: amsterdam
+  gather_facts: no
+  connection: local
+  tasks:
+    - name: Test connectivity
+      napalm_get_facts:
+        provider: '{{ provider_napalm }}'
+      tags: [ ospf, connectivity ]
+
+    - debug:
+        var=version.ansible_facts.napalm_facts.os_version

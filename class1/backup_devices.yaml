@@ -1,0 +1,31 @@
+---
+- name: Backup device configruation
+  hosts: amsterdam
+  gather_facts: false
+  vars:
+    config_dir: './CFGS'
+  tasks:
+
+    - name: Do show run
+      cli_command:
+        command: show run
+      register: backup
+      vars:
+        ansible_command_timeout: 40
+    
+    - name: Check if backup dirs exist
+      local_action:
+        module: file
+        path: '{{ config_dir}}/{{ inventory_hostname }}/backup'
+        state: directory
+        mode: 0775
+        recurse: yes
+
+    - name: Set Date
+      set_fact:
+        timestamp: "{{ lookup('pipe', 'date +%Y%m%d%H%M%S') }}"
+      
+    - name: Save running-config to file
+      copy:
+        content: "{{backup.stdout}}"
+        dest: "{{ config_dir}}/{{ inventory_hostname }}/backup/{{inventory_hostname}}_{{timestamp}}.backup"

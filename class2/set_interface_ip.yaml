@@ -1,0 +1,33 @@
+# set_interface_ip.yaml
+
+- name: Set interface IP with different modules
+  hosts: amsterdam-spine1
+  tasks:
+    - name: Set interface config - ios_config - exact match
+      ios_config:
+        lines:
+          - description Naar amsterdam_backb1 - Ethernet2/22 - 172.20.30.11/31
+          - 'ip address {{ intf_uplink_to_amsterdam_backb1_ip }} {{ intf_uplink_to_amsterdam_backb1_subnet }}'
+          - duplex auto
+          - speed auto
+          - media-type rj45
+          - no cdp enable
+        parents: 'interface {{ intf_uplink_to_amsterdam_backb1_intf }}'
+        match: exact
+
+    - name: Set interface config - cli_command - line by line in commands
+      cli_command:
+        command: '{{ item }}'
+      loop:
+        - config terminal
+        - 'interface {{ intf_uplink_to_amsterdam_backb1_intf }}' 
+        - 'ip address {{ intf_uplink_to_amsterdam_backb1_ip }} {{ intf_uplink_to_amsterdam_backb1_subnet }}'
+        - duplex auto
+        - speed auto
+        - media-type rj45
+        - no cdp enable
+        - exit
+    - name: Set interface config - net_l3_interface
+      net_l3_interface:
+        name: '{{ intf_uplink_to_amsterdam_backb1_intf }}'
+        ipv4: '{{ intf_uplink_to_amsterdam_backb1_ip_cidr }}'      
