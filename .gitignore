@@ -1,4 +1,10 @@
 /CFGS/*
+<<<<<<< HEAD
 */CFGS/*
 credentials.yaml
 secrets.yaml
+=======
+credentials.*
+secrets.*
+
+>>>>>>> 6fd2450d81e236697536c9c37c6b25cea4fa2e83
