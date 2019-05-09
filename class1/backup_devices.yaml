@@ -1,6 +1,6 @@
 ---
 - name: Backup device configruation
-  hosts: amsterdam
+  hosts: amsterdam-spine1:amsterdam-spine2
   gather_facts: false
   vars:
     config_dir: './CFGS'
