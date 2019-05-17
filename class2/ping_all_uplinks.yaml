@@ -1,4 +1,14 @@
-- name: Check all uplinks in Amsterdam spine and leafs
+- name: Check all uplinks in Amsterdam ios_ping modules
+  hosts: [amsterdam-spines, amsterdam-leafs]
+  gather_facts: no
+  tasks:
+    - name: ping all other uplink IPs
+      ios_ping:
+        source: "{{ item.my_ip | ipaddr('address') }}"
+        dest: "{{ item.remote_ip | ipaddr('address') }}"
+      loop: '{{ uplinks }}'
+
+- name: Check all uplinks in Amsterdam net_ping module
   hosts: [amsterdam-spines, amsterdam-leafs]
   gather_facts: no
   tasks:
@@ -7,3 +17,20 @@
         source: "{{ item.my_ip | ipaddr('address') }}"
         dest: "{{ item.remote_ip | ipaddr('address') }}"
       loop: '{{ uplinks }}'
+
+
+- name: Check all uplinks in Amsterdam ios_command modules
+  hosts: [amsterdam-spines, amsterdam-leafs]
+  gather_facts: no
+  tasks:
+
+    - name: Run ping to R1 using ios_command
+      register: ping_result
+      ios_command: 
+#        provider: "{{ provider }}"
+        commands: 
+          - "ping 172.20.30.10 repeat 3 timeout 1"
+ 
+    - name: Check ping result
+      fail: msg="Ping failed {{ ping_result.stdout }}"
+      when: "'100 percent' not in ping_result.stdout[0]"

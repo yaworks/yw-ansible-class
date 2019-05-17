@@ -1,0 +1,20 @@
+- name: set_uplinks_amsterdam.yaml
+  hosts: amsterdam
+  gather_facts: no
+  tasks:
+    - name: (Re)set interface config for IOS devices
+      ios_l3_interface:
+        name: '{{ item.my_port }}'
+        ipv4: '{{ item.my_ip }}'
+        state: present
+
+      with_items: '{{ uplinks }}'
+      when: "ansible_network_os == 'ios' and uplinks is defined"
+
+    - name: Enable Interfaces
+      ios_interface:
+        name: '{{ item.my_port }}'
+        enabled: True
+        state: present
+      with_items: '{{ uplinks }}'
+      when: "ansible_network_os == 'ios' and uplinks is defined"

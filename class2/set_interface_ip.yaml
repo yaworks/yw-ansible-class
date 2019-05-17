@@ -2,17 +2,22 @@
 
 - name: Set interface IP with different modules
   hosts: amsterdam-spine1
+  vars:
+    - uplink_spine1_to_r1_intf: GigabitEthernet0/0
+    - uplink_spine1_to_r1_ip: 172.20.30.12
+    - uplink_spine1_to_r1_subnet: 255.255.255.254
+    - uplink_spine1_to_r1_ip_cidr: 172.20.30.12/31
   tasks:
     - name: Set interface config - ios_config - exact match
       ios_config:
         lines:
-          - description Naar amsterdam_backb1 - Ethernet2/22 - 172.20.30.11/31
-          - 'ip address {{ intf_uplink_to_amsterdam_backb1_ip }} {{ intf_uplink_to_amsterdam_backb1_subnet }}'
+          - description Naar amsterdam_r1 - Gi0/0 - 172.20.30.11/31
+          - 'ip address {{ uplink_spine1_to_r1_ip }} {{ uplink_spine1_to_r1_subnet }}'
           - duplex auto
           - speed auto
           - media-type rj45
           - no cdp enable
-        parents: 'interface {{ intf_uplink_to_amsterdam_backb1_intf }}'
+        parents: 'interface {{ uplink_spine1_to_r1_intf }}'
         match: exact
 
     - name: Set interface config - cli_command - line by line in commands
@@ -20,8 +25,8 @@
         command: '{{ item }}'
       loop:
         - config terminal
-        - 'interface {{ intf_uplink_to_amsterdam_backb1_intf }}' 
-        - 'ip address {{ intf_uplink_to_amsterdam_backb1_ip }} {{ intf_uplink_to_amsterdam_backb1_subnet }}'
+        - 'interface {{ uplink_spine1_to_r1_intf }}' 
+        - 'ip address {{ uplink_spine1_to_r1_ip }} {{ uplink_spine1_to_r1_subnet }}'
         - duplex auto
         - speed auto
         - media-type rj45
@@ -29,5 +34,5 @@
         - exit
     - name: Set interface config - net_l3_interface
       net_l3_interface:
-        name: '{{ intf_uplink_to_amsterdam_backb1_intf }}'
-        ipv4: '{{ intf_uplink_to_amsterdam_backb1_ip_cidr }}'      
+        name: '{{ uplink_spine1_to_r1_intf }}'
+        ipv4: '{{ uplink_spine1_to_r1_ip_cidr }}'      

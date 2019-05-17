@@ -1,0 +1,32 @@
+# set_interface_ip.yaml
+
+- name: Set interface IP with different modules
+  hosts: amsterdam-spine1
+  vars:
+    - ipv4network: '192.168.14.'
+    - ipv4subnet: '32'
+    - ipv6network: '2001:db8::/32'
+  tasks:
+    - name: Choose loopback interface
+      set_fact:
+        loopbackint: "Loopback{{ 100 | random }}"
+
+    - name: Set IPv4 rando address
+      set_fact:
+        ipv4host: "{{ 253 | random(start=80) }}"
+
+    - name: Get ipv6 random host
+      set_fact:
+        ipv6hostnr: "{{ (ipv6network | ipaddr('net') | ipaddr('size')) | random }}"
+
+    - name: Get IPv6 address
+      set_fact:
+        ipv6host: "{{ ipv6network | ipaddr('net') | ipaddr('200') }}"
+
+#    - debug:
+#        msg: '{{ ipv6host }}'
+    - name: Set loopback interface
+      net_l3_interface:
+        name: '{{ loopbackint }}'
+        ipv4: '{{ ipv4network }}{{ ipv4host }}/{{ ipv4subnet }}'      
+        ipv6: '{{ ipv6host }}'

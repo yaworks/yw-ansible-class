@@ -19,8 +19,3 @@ uplinks:
     my_ip: 172.20.30.8/31
     remote_port: GigabitEthernet0/0
     remote_ip: 172.20.30.9/31              
-  - desc: Naar amsterdam_backb1
-    my_port: GigabitEthernet0/4
-    my_ip: 172.20.30.10/31
-    remote_port: Ethernet2/22
-    remote_ip: 172.20.30.11/31    
