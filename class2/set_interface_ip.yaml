@@ -16,23 +16,14 @@
           - duplex auto
           - speed auto
           - media-type rj45
-          - no cdp enable
         parents: 'interface {{ uplink_spine1_to_r1_intf }}'
         match: exact
 
-    - name: Set interface config - cli_command - line by line in commands
-      cli_command:
-        command: '{{ item }}'
-      loop:
-        - config terminal
-        - 'interface {{ uplink_spine1_to_r1_intf }}' 
-        - 'ip address {{ uplink_spine1_to_r1_ip }} {{ uplink_spine1_to_r1_subnet }}'
-        - duplex auto
-        - speed auto
-        - media-type rj45
-        - no cdp enable
-        - exit
-    - name: Set interface config - net_l3_interface
-      net_l3_interface:
+    # - name: Check if interface is in shutdown state
+    #   ios_command:
+    #     command: 'show run | '
+
+    - name: Enable interface
+      ios_interface:
         name: '{{ uplink_spine1_to_r1_intf }}'
-        ipv4: '{{ uplink_spine1_to_r1_ip_cidr }}'      
+        enabled: True

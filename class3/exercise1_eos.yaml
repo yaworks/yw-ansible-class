@@ -1,0 +1,92 @@
+---
+- name: Create VLAN with eos_config module and API
+  hosts: [london]
+  tasks:
+    - name: Create vlan Servers
+      eos_vlan:
+        provider: '{{ creds_core_eapi }}'
+        vlan_id: '{{ server_vlan }}'
+        name: student1_server
+        state: present
+      when: "'spine' in inventory_hostname" 
+      become: true
+    - name: Create vlan Users
+      eos_vlan:
+        provider: '{{ creds_core_eapi }}'
+        vlan_id: '{{ user_vlan }}'
+        name: student1_users
+        state: present
+        interfaces:
+          - Ethernet1
+      when: "'leaf' in inventory_hostname" 
+      become: true
+    - name: Set switchports Spines
+      eos_l2_interface:
+        provider: '{{ creds_core_eapi }}'
+        name: Ethernet1
+        mode: access
+        access_vlan: '{{ server_vlan }}'
+        authorize: yes
+      become: true
+      when: "'spine' in inventory_hostname" 
+    - name: Set switchports Leafs
+      eos_l2_interface:
+        provider: '{{ creds_core_eapi }}'
+        name: Ethernet1
+        mode: access
+        access_vlan: '{{ user_vlan }}'
+        authorize: yes
+      when: "'leaf' in inventory_hostname" 
+          
+
+
+
+
+- name: Create VLAN with net_vlan module (only SSH available) 
+  hosts: [london]
+  tasks:
+    - debug:
+        msg: "With the global module net_vlan only basic tasks are available. Its not possible to directly map interfaces to an Vlan"
+    - name: Create vlan Servers
+      net_vlan:
+        vlan_id: '{{ server_vlan }}'
+        name: student1_servers
+        state: present
+        authorize: yes
+      when: "'spine' in inventory_hostname" 
+    - name: Create vlan Users
+      net_vlan:
+        vlan_id: '{{ user_vlan }}'
+        name: student1_users
+        state: present
+      become: true
+
+    - name: configure Layer-2 interface
+      net_l2_interface:
+        name: Ethernet1
+        mode: access
+        access_vlan: '{{ server_vlan }}'
+        authorize: yes
+      when: "'spine' in inventory_hostname"
+
+    - name: configure Layer-2 interface
+      net_l2_interface:
+        name: Ethernet1
+        mode: access
+        access_vlan: '{{ user_vlan }}'
+        authorize: yes
+      when: "'leaf' in inventory_hostname"
+
+    - name: set description spines
+      net_interface:
+        name: Ethernet1
+        description: student1-servers
+        authorize: yes
+      when: "'spine' in inventory_hostname" 
+
+    - name: set description leafs
+      net_interface:
+        name: Ethernet1
+        description: student1-users
+        authorize: yes
+      when: "'leaf' in inventory_hostname" 

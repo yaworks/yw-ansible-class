@@ -1,0 +1,12 @@
+---
+- name: Set SNMP config
+  hosts: [amsterdam-leaf1]
+  gather_facts: no
+  tasks:
+    - name: 'Set SNMP config lines for host {{ snmp_host_ip }} '
+      ios_config:
+        lines:
+          - 'snmp-server community {{ snmp_community }} RO'
+          - snmp-server trap-source Loopback0
+          - 'snmp-server host {{ snmp_host_ip }} {{ snmp_community }}'
+      become: true

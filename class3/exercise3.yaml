@@ -1,61 +1,16 @@
 ---
-- name: Deploy interior gateway protocol - OSPF - short task
-  hosts: [amsterdam-spine1]
+- name: Set SNMP config
+  hosts: [amsterdam-leaf1]
+  gather_facts: no
   tasks:
-    - name: Check if OSPF process parent
+    - name: 'Set SNMP config lines for host {{ snmp_host_ip }} RO'
       ios_config:
         lines:
-          - 'router ospf {{ ospf.processid }}'
-    - name: 'Add childs to (router ospf {{ ospf.processid }})'
-      ios_config:
-        parents: 'router ospf {{ ospf.processid }}'
-        lines:
-          - 'router ospf {{ ospf.processid }}'
-          - 'router-id {{ loopback_ip }}'
-          - 'network 0.0.0.0 255.255.255.255 area {{ ospf.ospf_area_default }}'
+          - 'snmp-server community {{ snmp_community }}'
+          - snmp-server trap-source Loopback0
 
-
-- name: Deploy interior gateway protocol - OSPF Seperate tasks
-  hosts: [amsterdam-spine1]
-  tasks:
-    - name: Check if OSPF process exist
+    - name: 'Set SNMP config lines for host {{ item }}'
       ios_config:
         lines:
-          - 'router ospf {{ ospf.processid }}'
-
-    - name: Configure router ID
-      ios_config:
-        lines: router-id {{ loopback_ip }}
-        parents: 'router ospf {{ ospf.processid }}'
-
-    - name: Configure OSPF Global
-      ios_config:
-        lines: '{{ ospf.global }}'
-        parents: 'router ospf {{ ospf.processid }}'
-      changed_when: false
-
-    - name: Configure distribution to area {{ ospf.ospf_area_default }}
-      ios_config:
-        lines: 'network 0.0.0.0 255.255.255.255 area {{ ospf.ospf_area_default }}'
-        parents: 'router ospf {{ ospf.processid }}'
-
-- name: Deploy interior gateway protocol - OSPF Check neighbor for passive interfaces
-  hosts: [amsterdam-spine1]
-  vars:
-    uplinks:
-      - my_port: GigabitEthernet0/5
-        my_ip: 172.20.30.20/31
-        remote_device: amsterdam-spine2
-        remote_port: GigabitEthernet0/5
-        remote_ip: 172.20.30.21/31
-        ospf: yes
-  tasks:
-    - name: Check which devices needs passive interfaces
-      ios_commands:
-        command:
-          - show lldp neighbor
-      register: output
-
-    - set_fact:
-        lldp_neighbors: '{{ output.stdout }}'
-
+          - 'snmp-server host {{ item }} {{ snmp_community }}'
+      loop: '{{ snmp_host_ips }}'

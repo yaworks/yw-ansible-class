@@ -1,0 +1,12 @@
+# set_interface_ip.yaml
+
+- name: Set interface IP with different modules
+  hosts: amsterdam-spine1
+  vars:
+    - uplink_spine1_to_r1_intf: GigabitEthernet0/0
+    - uplink_spine1_to_r1_ip_cidr: 172.20.30.12/31
+  tasks:
+    - name: Set interface config - net_l3_interface
+      net_l3_interface:
+        name: '{{ uplink_spine1_to_r1_intf }}'
+        ipv4: '{{ uplink_spine1_to_r1_ip_cidr }}'      

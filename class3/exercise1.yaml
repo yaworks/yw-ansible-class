@@ -1,9 +1,11 @@
 ---
-- name: Check connection to Arista EOS devices
-  hosts: london
+- name: Set Loopback1099
+  hosts: amsterdam-spine1
+  gather_facts: no
   tasks:
-    - name: Connect to devices
-      eos_facts:
-        provider: '{{ creds_core_eapi }}'
-
+    - name: Set Loopback 1099 IP address
+      ios_config:
+        lines:
+          - ip address 192.168.14.99 255.255.255.255
+        parents: Interface Loopback1099
 
